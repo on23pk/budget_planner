@@ -117,7 +117,6 @@ export default {
         if (data.status === 'success') {
           alert('Registrierung erfolgreich!');
 
-          // Optional: Direkter Login nach Registrierung
           localStorage.setItem('user', JSON.stringify(data.user)); // Speichere User-Daten
 
           // Weiterleitung zur Transaktionsseite

@@ -2,9 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginRegisterForm from './components/LoginRegisterForm.vue';
 import Transactions from './components/Transactions.vue';
 import BudgetForm from './components/BudgetForm.vue';
-import EditTransactions from './components/EditTransactions.vue'; // Importiere die EditTransaction-Komponente
+import EditTransactions from './components/EditTransactions.vue'; // Importiert die EditTransaction-Komponente
 
-// Simulierter Login-Check (du könntest dies durch einen API-Call ersetzen)
+// Simulierter Login-Check 
 const isAuthenticated = () => {
   return !!localStorage.getItem('user'); // Beispiel: Nutzer wird als eingeloggt betrachtet, wenn 'user' gesetzt ist
 };

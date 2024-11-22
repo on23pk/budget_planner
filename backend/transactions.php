@@ -9,24 +9,36 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
 
+// Sitzung starten, um die Benutzeridentität zu verwalten
 session_start();
 
+// Überprüfen, ob der Benutzer authentifiziert ist
 if (!isset($_SESSION['user_id'])) {
+    // Wenn der Benutzer nicht eingeloggt ist, wird eine Fehlermeldung zurückgegeben
     echo json_encode(['status' => 'error', 'message' => 'Nicht authentifiziert']);
-    exit();
+    exit(); // Skript abbrechen
 }
 
-require 'db.php';
+require 'db.php'; // Datenbankverbindung einbinden
 
+// Überprüfen der HTTP-Methode
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $stmt = $pdo->prepare("SELECT * FROM transactions WHERE user_id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo json_encode(['status' => 'success', 'data' => $transactions]);
+    // Verarbeitung einer GET-Anfrage: Abrufen der Transaktionen des eingeloggten Benutzers
+    $stmt = $pdo->prepare("SELECT * FROM transactions WHERE user_id = ?"); // SQL-Statement vorbereiten
+    $stmt->execute([$_SESSION['user_id']]); // Benutzer-ID aus der Session verwenden
+    $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC); // Alle Transaktionen abrufen
+
+    // JSON-Antwort mit den Transaktionen senden
+    echo json_encode(['status' => 'success', 'data' => $transactions]); // Alle Transaktionen abrufen
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents("php://input"));
+    // Verarbeitung einer POST-Anfrage: Hinzufügen einer neuen Transaktion
+    $data = json_decode(file_get_contents("php://input")); // JSON-Daten aus dem Request-Body lesen
+
+    // SQL-Statement vorbereiten und neue Transaktion einfügen
     $stmt = $pdo->prepare("INSERT INTO transactions (user_id, name, amount) VALUES (?, ?, ?)");
-    $stmt->execute([$_SESSION['user_id'], $data->name, $data->amount]);
+    $stmt->execute([$_SESSION['user_id'], $data->name, $data->amount]); // Werte einfügen (Name und Betrag)
+
+    // Erfolgsmeldung als JSON zurückgeben
     echo json_encode(['status' => 'success', 'message' => 'Transaktion hinzugefügt']);
 }
 ?>
